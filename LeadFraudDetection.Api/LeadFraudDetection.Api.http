@@ -1,6 +1,100 @@
 @LeadFraudDetection.Api_HostAddress = http://localhost:5282
+@token = YOUR_JWT_TOKEN_HERE
 
-GET {{LeadFraudDetection.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Login as Admin
+POST {{LeadFraudDetection.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "Admin123!"
+}
+
+### Login as User
+POST {{LeadFraudDetection.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "User123!"
+}
+
+### Get All Leads (requires authentication)
+GET {{LeadFraudDetection.Api_HostAddress}}/api/leads
+Authorization: Bearer {{token}}
+
+### Get Lead by ID
+GET {{LeadFraudDetection.Api_HostAddress}}/api/leads/1
+Authorization: Bearer {{token}}
+
+### Create New Lead (triggers fraud detection)
+POST {{LeadFraudDetection.Api_HostAddress}}/api/leads
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "phoneNumber": "1234567890",
+  "ipAddress": "192.168.1.1",
+  "userAgent": "Mozilla/5.0",
+  "firstName": "John",
+  "lastName": "Doe",
+  "company": "Test Company"
+}
+
+### Create Lead with Disposable Email
+POST {{LeadFraudDetection.Api_HostAddress}}/api/leads
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "email": "fraud@tempmail.com",
+  "phoneNumber": "9999999999",
+  "ipAddress": "10.0.0.1",
+  "userAgent": "",
+  "firstName": "Suspicious",
+  "lastName": "User",
+  "company": ""
+}
+
+### Check Fraud for Existing Lead
+POST {{LeadFraudDetection.Api_HostAddress}}/api/leads/1/check-fraud
+Authorization: Bearer {{token}}
+
+### Get All Blacklist Entries (Admin only)
+GET {{LeadFraudDetection.Api_HostAddress}}/api/blacklist
+Authorization: Bearer {{token}}
+
+### Check if Email is Blacklisted
+GET {{LeadFraudDetection.Api_HostAddress}}/api/blacklist/check?type=Email&value=fraud@example.com
+Authorization: Bearer {{token}}
+
+### Add Email to Blacklist (Admin only)
+POST {{LeadFraudDetection.Api_HostAddress}}/api/blacklist
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "type": "Email",
+  "value": "fraud@example.com",
+  "reason": "Known fraudster",
+  "isActive": true
+}
+
+### Add IP to Blacklist (Admin only)
+POST {{LeadFraudDetection.Api_HostAddress}}/api/blacklist
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "type": "IP",
+  "value": "192.0.2.1",
+  "reason": "Suspicious activity",
+  "isActive": true
+}
+
+### Remove Blacklist Entry (Admin only)
+DELETE {{LeadFraudDetection.Api_HostAddress}}/api/blacklist/1
+Authorization: Bearer {{token}}
 
 ###
